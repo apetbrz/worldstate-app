@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('./partials/head.ejs'); %>
+</head>
+<body class="container">
+
+  <header>
+    <%- include('./partials/header.ejs'); %>
+  </header>
+
+  <main>
+    <pre><ul class="display">
+        <ul class="datacheck">
+            <li id="li1">JAVASCRIPTFUNCTIONALITYCHECK</li>
+            <li id="li2">CONNECTIONCHECK</li>
+        </ul>
+        <li id="time">CURRENTTIME</li>
+        <li id="refresh">LASTWORLDSTATEUPDATETIME</li>
+        <li id="li3">CAPTUREMISSIONS</li>
+        <li id="li4">EXTERMINATEMISSIONS</li>
+        <li id="li5">DISRUPTIONMISSIONS</li>
+        <li id="li6">SURVIVALMISSIONS</li>
+        <li id="li7">RESCUEMISSIONS</li>
+    </ul></pre>
+  </main>
+
+  <footer>
+    <%- include('./partials/footer.ejs'); %>
+  </footer>
+
+</body>
+</html>
+
+<script src="/javascripts/wf-worldstate-tracker-script.js"></script>
