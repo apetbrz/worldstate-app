@@ -18,13 +18,12 @@ router.get('/worldstate', (req, res, next) => {
 
   console.log(worldstatefileurl);
 
-  const jsonData = async () => {
+  const textData = async () => {
     let response = await fetch(worldstatefileurl).catch(console.error);
-    console.log(response);
     return await response.text();
   }
 
-  jsonData().then((data) => res.end(data));
+  textData().then((data) => res.end(data));
 
 });
 

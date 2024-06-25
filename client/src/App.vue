@@ -2,10 +2,10 @@
   import Header from './components/Header.vue'
   import Relics from './components/Relics.vue'
   import Menu from './components/Menu.vue'
-  import { ref } from 'vue'
+  import { Suspense, ref } from 'vue'
 
   const worldstatefileurl = encodeURIComponent("worldstate");
-  const solnodesdata = 'https://api.warframestat.us/solNodes/';
+  const solnodesdataurl = 'https://api.warframestat.us/solNodes/';
 
   const refreshTimeSeconds = 60;
 
@@ -15,6 +15,14 @@
   var wfdata = {};
   var missionData = {};
   var solNodes;
+  
+  const getSolNodes = async () => {
+    let res = await fetch(solnodesdataurl).then(console.log("node data fetched!"));
+    let data = await res.json();
+    return data;
+  }
+
+  getSolNodes().then((data) => solNodes = data);
 
   const refresh = async () => {
 
@@ -25,15 +33,13 @@
 
     worldstateTime = new Date(data.Time*1000).toLocaleTimeString()
 
+    missionData.cascade = checkForFissure(data, "MT_VOID_CASCADE");
     missionData.capture = checkForFissure(data, "MT_CAPTURE");
-    missionData.extermination = checkForFissure(data, "MT_EXTERMINATION");  
+    missionData.exterminate = checkForFissure(data, "MT_EXTERMINATION");  
     missionData.disruption = checkForFissure(data, "MT_ARTIFACT");
     missionData.survival = checkForFissure(data, "MT_SURVIVAL");
     missionData.rescue = checkForFissure(data, "MT_RESCUE");
   }
-
-  refresh();
-  setInterval(refresh, refreshTimeSeconds*1000);
 
   function checkForFissure(data, missionType){
     let fissures = data.ActiveMissions;
@@ -44,12 +50,13 @@
             let expirationTime = Number(mission.Expiry.$date.$numberLong);
 
             if(expirationTime > Date.now()){
-                if(output === "") output = "FISSURE ACTIVE!";
-                output += "\n\nrelic: " + mission.Modifier;
-                output += "\nplanet: " + regionToPlanet(mission.Region);
-                output += "\nsteelpath: " + (mission.Hard != null ? "yes" : "no");
-                output += "\nfaction: " + nodeToFaction(mission.Node);
-                output += "\nuntil: " + (new Date(Number(mission.Expiry.$date.$numberLong)).toLocaleTimeString());
+              let nodeData = getNodeData(mission.Node);
+              if(output === "") output = "FISSURE ACTIVE!";
+              output += "\n\nrelic: " + mission.Modifier;
+              output += "\nplanet: " + regionToPlanet(mission.Region);
+              output += "\nsteelpath: " + (mission.Hard != null ? "yes" : "no");
+              output += "\nfaction: " + nodeData.enemy;
+              output += "\nuntil: " + (new Date(Number(mission.Expiry.$date.$numberLong)).toLocaleTimeString());
             }
         }
     });
@@ -57,12 +64,16 @@
     if(output === "") output = "no fissure active";
     return output;
   }
-  function nodeToFaction(node){
+  function getNodeData(node){
       if(solNodes === undefined) {
-        console.log("no solnodes data!"); return "";
+        console.log("no solnodes data!"); 
+        return "";
       }
-      if(solNodes[node] === undefined) return "";
-      return solNodes[node].enemy;
+      if(solNodes[node] === undefined){
+        console.log("node not found?? - " + node);
+        return "";
+      }
+      return solNodes[node];
   }
   function regionToPlanet(region){
     switch(region){
@@ -89,6 +100,9 @@
 
     }
   }
+
+  refresh();
+  setInterval(refresh, refreshTimeSeconds*1000);
   
 </script>
 

@@ -20,6 +20,7 @@
         <pre><ul class="display">
             <li id="time">Current Time: {{ currentTime }}</li>
             <li id="refresh">Last Worldstate Update: {{ worldstateTime }}</li>
+            <li id="li2">Cascade: {{ missionData.cascade }}</li>
             <li id="li3">Capture: {{ missionData.capture }}</li>
             <li id="li4">Exterminate: {{ missionData.exterminate }}</li>
             <li id="li5">Disruption: {{ missionData.disruption }}</li>
